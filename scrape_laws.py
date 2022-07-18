@@ -49,6 +49,8 @@ df = pd.DataFrame.from_records(laws, columns =['Country', 'Legislation'])
 # make index column a regurlar column
 df.reset_index(inplace=True)
 
-# Create Multiindex
+# create multindex
 df.set_index([ "Country", "index",], inplace=True)
 df.sort_index(inplace=True)
+# write to csv
+df.to_csv('hate_laws.zip', index=False)
