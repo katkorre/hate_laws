@@ -30,3 +30,5 @@ def scores(data):
     cosine_scores = util.pytorch_cos_sim(embedding1, embedding2)
     scores.append((f"{item}:", cosine_scores.item()))
   return scores
+
+scores(df)
