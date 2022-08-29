@@ -14,7 +14,7 @@ model = SentenceTransformer('stsb-roberta-large')
 
 # we need to have pairs of all possible language combinations
 from itertools import combinations
-es = list(combinations(sample['Country'], 2))
+es = list(combinations(df['Country'], 2))
 
 # function that takes as input a dataframe. 
 def scores(data): 
