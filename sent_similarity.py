@@ -49,7 +49,7 @@ with ZipFile(file_name, 'r') as zip:
 ext = ('.csv')
  
 # iterating over all files
-for files in os.listdir("/content/"):
+for files in os.listdir("//home/akorre/hate_laws/"):
     if files.endswith(ext):
         s = pd.read_csv(files)
 
