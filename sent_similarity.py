@@ -1,7 +1,5 @@
 import pandas as pd
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
 import nltk
 import os
 import itertools
@@ -11,7 +9,6 @@ from sentence_transformers import SentenceTransformer, util
 from nltk.tokenize import sent_tokenize
 from itertools import product
 from ast import literal_eval
-from pylab import savefig
 from zipfile import ZipFile
  
 # get a list of the country names to use for iterating through the text
