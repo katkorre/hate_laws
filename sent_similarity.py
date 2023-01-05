@@ -1,36 +1,28 @@
 import pandas as pd
 import numpy as np
-import nltk
-import os
+import seaborn as sns
+import matplotlib.pyplot as plt
+import nltk; nltk.download('punkt')
 import itertools
-nltk.download('punkt')
+
 
 from sentence_transformers import SentenceTransformer, util
 from nltk.tokenize import sent_tokenize
 from itertools import product
 from ast import literal_eval
-from zipfile import ZipFile
+from pylab import savefig
  
-# get a list of the country names to use for iterating through the text
-countries = ["AFGHANISTAN", "ALBANIA", "ALGERIA", "ANDORRA", "ANGOLA", "ANTIGUA AND BARBUDA","ARGENTINA", "ARMENIA", "AUSTRALIA", "AUSTRIA", "AZERBAIJAN",
-             "BAHAMAS", "BAHRAIN", "BANGLADESH", "BARBADOS", "BELARUS", "BELGIUM", "BELIZE", "BENIN", "BHUTAN", "BOLIVIA", "BOSNIA AND HERZEGOVINA", "BOTSWANA",
-             "BRAZIL", "BRUNEI DARUSSALAM", "BULGARIA", "BURKINA FASO", "BURUNDI", "CABO VERDE", "CAMBODIA", "CAMEROON", "CANADA", "CENTRAL AFRICAN REPUBLIC", "CHAD",
-             "CHILE", "CHINA", "COLOMBIA", "COMOROS", "CONGO BRAZZAVILLE", "COSTA RICA", "COTE D’IVOIRE", "CROATIA", "CUBA", "CYPRUS", "CZECH REPUBLIC", "DEMOCRATIC PEOPLE’S REPUBLIC OF KOREA",
-             "DEMOCRATIC REPUBLIC OF THE CONGO", "DENMARK", "DJIBOUTI", "DOMINICA", "DOMINICAN REPUBLIC", "ECUADOR", "EGYPT", "EL SALVADOR", "EQUATORIAL GUINEA",
-             "ERITREA", "ESTONIA", "ESWATINI", "ETHIOPIA", "FIJI", "FINLAND", "FRANCE", "GABON", "GAMBIA", "GEORGIA", "GERMANY", "GHANA", "GREECE", "GRENADA",
-             "GUATEMALA", "GUINEA", "GUINEA BISSAU", "GUYANA", "HAITI", "HONDURAS", "HUNGARY", "ICELAND", "INDIA", "INDONESIA", "IRAN (Islamic Republic of)", "IRAQ", 
-             "IRELAND", "ISRAEL", "ITALY" , "JAMAICA", "JAPAN", "JORDAN", "KAZAKHSTAN", "KENYA", "KIRIBATI", "KUWAIT", "KYRGYZSTAN", "LATVIA", "LEBANON", "LESOTHO",
-             "LIBERIA", "LIBYA", "LAO PEOPLE’S DEMOCRATIC REPUBLIC", "LIECHTENSTEIN", "LITHUANIA", "LUXEMBOURG", "MADAGASCAR", "MALAWI", "MALAYSIA", "MALDIVES",
-             "MONTENEGRO", "MOROCCO", "MOZAMBIQUE", "MYANMAR", "NAMIBIA", "NAURU", "NEPAL", "THE NETHERLANDS", "NEW ZEALAND", "NICARAGUA", "NIGER", "NIGERIA", 
-             "NORTH MACEDONIA", "NORWAY", "OMAN", "PAKISTAN", "PALAU", "PANAMA", "PAPUA NEW GUINEA", "PARAGUAY", "PERU", "THE PHILIPPINES", "POLAND", "PORTUGAL",
-             "QATAR", "REPUBLIC OF KOREA", "ROMANIA", "RUSSIAN FEDERATION", "RWANDA", "SAINT KITTS AND NEVIS", "SAINT LUCIA", "SAINT VINCENT AND THE GRENADINES", 
-             "STATE OF PALESTINE", "SAMOA", "SAN MARINO", "SAO TOME AND PRINCIPE", "SAUDI ARABIA", "SENEGAL", "SERBIA", "SEYCHELLES", "SIERRA LEONE", "SINGAPORE",
-             "SLOVAKIA", "SLOVENIA", "SOLOMON ISLANDS", "SOMALIA", "SOUTH AFRICA", "SOUTH SUDAN", "SPAIN", "SRI LANKA", "SURINAME", "SWEDEN", "SWITZERLAND",
-             "SYRIAN ARAB REPUBLIC", "TAJIKISTAN", "TANZANIA", "THAILAND", "TIMOR-LESTE", "TOGO", "TONGA", "TRINIDAD AND TOBAGO", "TUNISIA", "TURKEY",
-             "TURKMENISTAN", "TUVALU", "UGANDA", "UKRAINE", "UNITED ARAB EMIRATES", "UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN IRELAND", "UNITED STATES OF AMERICA",
-             "URUGUAY", "UZBEKISTAN", "VANUATU", "VENEZEULA", "VIETNAM", "YEMEN", "ZAMBIA", "ZIMBABWE"]
-# specifying the zip file name
-file_name = "country_laws.zip"
+ 
+df = pd.read_csv("hate_laws.csv")
+
+# which countries do not have laws on hate speech
+nolaw = df['Country'].loc[df['Legislation'].str.startswith('–')].to_list()
+
+# leave countries that contain legislation for hate speech
+df = df[df['Legislation'].str.startswith('–')== False]
+ 
+
+file_name = "/home/akorre/country_laws.zip/"
   
 # opening the zip file in READ mode
 with ZipFile(file_name, 'r') as zip:
@@ -45,9 +37,16 @@ with ZipFile(file_name, 'r') as zip:
 ext = ('.csv')
  
 # iterating over all files
-for files in os.listdir("//home/akorre/hate_laws/"):
+for files in os.listdir("/home/akorre/hate_laws/"):
     if files.endswith(ext):
         s = pd.read_csv(files)
+
+# drop nan values
+s = s.dropna()
+
+# get list of countries
+countries = df['Country'].to_list()
+countries = [x for x in countries if x not in nolaw]
 
 # country coupling
 cpairs = list(itertools.combinations(countries, 2))
@@ -83,8 +82,13 @@ def roberta_similarity_sent(x, y):
     scores.append((item, cosine_scores.item()))
   return scores
 
+  
 result = []
 for item in cpairs:
   result.append((item,roberta_similarity_sent(item[0], item[1])))
 
-print(result)
+
+with open("/home/akorre/hate_results.txt", "w") as f:
+  for item in result:
+    f.write(str(item))
+  f.close()
