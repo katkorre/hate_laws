@@ -88,7 +88,7 @@ for item in cpairs:
   result.append((item,roberta_similarity_sent(item[0], item[1])))
 
 
-with open("/home/akorre/hate_results.txt", "w") as f:
+with open("/home/akorre/result/hate_results.txt", "w") as f:
   for item in result:
     f.write(str(item))
   f.close()
