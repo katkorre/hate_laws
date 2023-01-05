@@ -8,7 +8,7 @@ from sentence_transformers import SentenceTransformer, util
 from nltk.tokenize import sent_tokenize
 from itertools import product
 from ast import literal_eval
-
+from zipfile import *
  
  
 df = pd.read_csv("hate_laws.csv")
