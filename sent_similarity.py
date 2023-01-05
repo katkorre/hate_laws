@@ -11,7 +11,7 @@ from ast import literal_eval
 from zipfile import *
  
  
-df = pd.read_csv("/home/akorre/hate_laws/hate_laws.csv)
+df = pd.read_csv("/home/akorre/hate_laws/hate_laws.csv")
 
 # which countries do not have laws on hate speech
 nolaw = df['Country'].loc[df['Legislation'].str.startswith('–')].to_list()
