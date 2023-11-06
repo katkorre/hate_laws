@@ -18,5 +18,8 @@ def remove_unwanted_text(text):
 
 df[law_column] = df[law_column].apply(remove_unwanted_text)
 
+# filter out rows that contain only hyphens or hyphens with newline characters 
+df = df[~df[law_column].str.replace('\n', '').str.strip().eq('–')]
+
 # save new file
 df.to_csv("hate_laws_processed.csv", index=False)
