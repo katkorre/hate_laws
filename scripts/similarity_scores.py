@@ -39,7 +39,7 @@ def calculate_similarity_scores(df):
 all_laws_df = pd.read_csv("hate_laws_processed.csv")
 
 # Calculate similarity scores for the provided DataFrame
-similarity_scores = calculate_similarity_scores(all_laws_df.head)
+similarity_scores = calculate_similarity_scores(all_laws_df)
 
 # Create a DataFrame from the similarity scores
 similarity_df = pd.DataFrame(similarity_scores, columns=['Country1', 'Sentence1', 'Country2', 'Sentence2', 'SimilarityScore'])
